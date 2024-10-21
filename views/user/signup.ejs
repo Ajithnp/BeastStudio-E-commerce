@@ -3,39 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Responsive User Login</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-
-    <link rel="stylesheet" href="/public/css/user_login.css">
+    <link rel="stylesheet" href="css/user_login.css">
 </head>
 <body>
-<div class="container" id="container">
-	<div class="form-container sign-in-container">
-		<form action="#">
-			<h1>Create Account</h1>
-			<div class="social-container">
-				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-			</div>
-			<span>or use your email for registration</span>
-			<input type="text" placeholder="Name" />
-			<input type="email" placeholder="Email" />
-			<input type="text" placeholder="phone number" />
-            <input type="password" placeholder="Password" />
+    <div class="container" id="container">
+        <div class="form-container sign-in-container">
+			<form id="signupForm"  method="post">
+				<h1>Create Account</h1>
+			
+				<input id="name" type="text" name="name" placeholder="Name" value="<%= typeof name !== 'undefined' ? name : '' %>" required />
+				<p id="name-error" class="error-message"></p>
+			
+				<input id="email" type="email" name="email" placeholder="Email" value="<%= typeof email !== 'undefined' ? email : '' %>" required />
+				<p id="email-error" class="error-message"></p>
+			
+				<input id="phonenumber" type="text" name="phonenumber" placeholder="Phone Number" value="<%= typeof phonenumber !== 'undefined' ? phonenumber : '' %>" required />
+				<p id="phonenumber-error" class="error-message"></p>
+			
+				<input id="password" type="password" name="password" placeholder="Password" required />
+				<p id="password-error" class="error-message"></p>
+			
+				<input id="cpassword" type="password" name="cpassword" placeholder="Confirm Password" required />
+				<p id="cpassword-error" class="error-message"></p>
+			
+				<button type="submit">Sign Up</button>
+				<p id="general-error" class="error-message"></p>
+			
+				<div class="google-login">
+					<span>Or sign up using google:</span>
+					<a href="/auth/google" class="social google-icon">
+					<!-- <span class="material-icons">google</span> -->
+						<i class="fab fa-google"></i>
+						<!-- <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google Logo" class="google-icon-image" /> -->
 
-			<button>Sign Up</button>
-		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-right">
-				<h1>Welcome Back!</h1>
-				<p>To keep connected with us please login with your personal info</p>
-		
-			</div>
-		</div>
-	</div>
-</div>
+					</a>
+				</div>
+			
+				<p>Already have an account? <a href="/login">Login</a></p>
+			
+				<% if (typeof message !== 'undefined' && message) { %>
+					<span style="color: rgb(236, 18, 18); text-align: center;"><%= message %></span>
+				<% } %>
+			</form>
+        </div>
+    </div>
 </body>
 </html>
+
+<style>
+    .error-message {
+        color: red;
+        font-size: 0.7em;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<script>
+	document.getElementById('signupForm').addEventListener('submit', function(e){
+		e.preventDefault(); // preventing form from submitting if alidation fails
+
+		 // Clear any previous error messages
+		 clearErrors();
+
+
+	const name = document.getElementById('name').value.trim();
+	const email = document.getElementById('email').value.trim();
+	const phonenumber = document.getElementById('phonenumber').value.trim();
+	const password= document.getElementById('password').value.trim();
+	const cpassword = document.getElementById('cpassword').value.trim()
+
+	const errors = {}; // Store errors for each field
+
+	// validation checks
+	// if (!name || name.length < 3) {
+    //     errors.name = "Name must be at least 3 characters long.";
+    // }
+	const namePattern = /^[a-zA-Z][a-zA-Z\s]*$/;
+
+if (!name || name.length < 3) {
+    errors.name = "Name must be at least 3 characters long.";
+} else if (!namePattern.test(name)) {
+    errors.name = "Name must start with a letter and contain only letters or spaces.";
+} else if (name.startsWith(' ')) {
+    errors.name = "Name cannot start with a space.";
+}
+
+
+	const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+    if (!email || !emailPattern.test(email)) {
+        errors.email = "Please enter a valid email address.";
+    }
+
+	const phonenumberPattern = /^[0-9]{10}$/;
+if (!phonenumber || !phonenumberPattern.test(phonenumber)) {
+    errors.phonenumber = "Phone number must be exactly 10 digits.";
+}
+
+if (!password || password.length < 6) {
+        errors.password = "Password must be at least 6 characters long.";
+    }
+if(password !== cpassword){
+	errors.cpassword ="Password do not match"
+}	
+ // checking is there  any errors
+	if (Object.keys(errors).length > 0) {
+            displayErrors(errors);
+			return;
+        }else {
+            
+            console.log("Form is valid. Proceeding to backend...");
+
+			//prepare data for sending
+
+			const userData ={
+				name,
+				email,
+				phonenumber,
+				password,
+				cpassword
+
+			};
+				// send data to the back-end using Fetch API
+
+			fetch('/signup',{
+				method: 'POST',
+				headers: {
+					'Content-Type' : 'application/json'
+				},
+				body: JSON.stringify(userData)
+			})
+			.then(response=>{
+				if (!response.ok) {
+					return response.json().then(err => {
+						throw new Error(err.message);
+					});
+				}
+				return response.json() //send data to backend
+			})
+			.then(data=>{
+				console.log(data);  // Handle success message
+
+				// redirect tot OTP page after successful signup
+				window.location.href='/otp'
+				
+			})
+			.catch(err =>{
+				console.error(err);
+				displayErrors({general: err.message}) //display the general messages
+			})
+
+		}
+	});
+
+  // Function to display errors under the relevant fields
+  function displayErrors(errors) {
+	clearErrors(); // clear prevoius errors first
+        Object.keys(errors).forEach((key) => {
+            const errorElement = document.getElementById(`${key}-error`);
+            if (errorElement) {
+                errorElement.textContent = errors[key];
+            }
+        });
+
+		// Display general errors if exixst
+		if (errors.general) {
+			document.getElementById('general-error').textContent= errors.general
+		}
+    }
+
+	 // Function to clear previous error messages
+	 function clearErrors() {
+        document.querySelectorAll('.error-message').forEach((element) => {
+            element.textContent = '';
+        });
+		// clear general messages
+		document.getElementById ('general-error').textContent = '';
+    }
+
+
+
+
+
+	
+</script>
+
+</body>
+</html>
+

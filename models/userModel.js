@@ -15,17 +15,20 @@ const userSchema = new mongoose.Schema({
     },
     phone:{
         type: Number,
-        required: [true, 'phone is required field'],
-        unique: true
+        required: [false, 'phone is required field'],
     },
     password:{
         type: String,
         required: false
     },
+    confirmPassword:{
+        type:String,
+        required:false
+    },
 
     googleId:{
         type:String,
-        unique:true
+        unique:false
     },
 
     isBlocked:{

@@ -2,24 +2,47 @@ const express=require('express')
 const mongoose = require('mongoose')
 const path = require('path')
 const session = require('express-session')
+const flash = require('connect-flash')
 const dotenv = require('dotenv')
+const passport = require('./config/passport')
+
 
 
 dotenv.config({path: './config.env'});
 
 const app=express()
 
+//middleware
+
+app.use(express.urlencoded({extended:true}))
+app.use(express.json())
+
 //session handling
 app.use(session({
     secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }
+    cookie: { 
+        secure: false,
+        maxAge:72*60*60*1000
+     }
 }))
 
-//middleware
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+// passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+// using flash middleware
+app.use(flash())
+
+// Middleware to make flash messages accessible in views
+app.use((req, res, next) => {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    next();
+});
+
 
 //set EJS ss the template engine
 app.set('view engine', 'ejs')  

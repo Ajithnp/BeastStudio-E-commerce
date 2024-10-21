@@ -14,36 +14,83 @@
     <title>Document</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/public/css/user_login.css">
+    <link rel="stylesheet" href="css/user_login.css">
 </head>
 <body>
 <div class="container" id="container">
 	<div class="form-container sign-in-container">
-		<form action="#">
-			<div class="social-container">
-				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
-			</div>
-			<span>or use your account</span>
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
+		<form  id="loginForm" action="#">
+			<h1>Create Account</h1>
+			<input type="email" id="userName"  placeholder="Email"  required/>
+			<input type="password"  id="password" placeholder="Password"  required/>
 			<a href="#">Forgot your password?</a>
-			<button>Sign In</button>
+			<button id="sign">Sign In</button>
+			<p>Don't you have an account.?<a href="/signup">Signup</a></p>
+			<div id="errorMessage" style="color: red;"></div>  <!--for displaying error message-->
 		</form>
 	</div>
 	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-right">
-				<h1>Hello, Friend!</h1>
-				<p>Enter your personal details and start journey with us</p>
-			</div>
-		</div>
+		
 	</div>
 </div>
 
-</body>
-</html>
+<script>
+	document.getElementById('loginForm').addEventListener('submit', async (event)=>{
+
+		event.preventDefault() // preventing default form submission
+
+		const userName = document.getElementById('userName').value;
+		const password = document.getElementById('password').value;
+		const errorMessageDiv = document.getElementById('errorMessage');
+
+		// Clear previous message
+		errorMessageDiv.innerText = ''
+
+		// Validate  email
+		const emailPattern =  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (! emailPattern.test(userName)){
+			errorMessageDiv.innerText = ' Please enter valid email..';
+			return;
+		}
+
+		//Validate password length
+		if (password.length < 6 ){
+			errorMessageDiv.innerText = 'Password must contain 6 characters';
+			return;
+		}
+
+		try {
+			const response = await fetch('/login',{
+				method: 'POST',
+				headers:{
+					'Content-Type' : 'application/json' 
+				},
+				body : JSON.stringify({userName, password}),
+			});
+
+			if (! response.ok){
+
+				//Handle HTTP errors
+				const errorData = await response.json()
+				throw new Error (errorData.message || 'Login failed') 
+			}
+
+			const data = await response.json()
+			console.log('Log in successfull',data);  // redirect
+			// After successful login 
+			window.location.href = '/';
+			
+			
+		} catch (error) {
+			// Display error messages to the user
+			errorMessageDiv.innerText = error.message;
+			console.log('an error occured',error);
+			
+			
+		}
+	})
+
+</script>
     
 </body>
 </html>
