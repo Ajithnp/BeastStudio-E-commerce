@@ -3,12 +3,12 @@ const mongoose = require('mongoose')
 const path = require('path')
 const session = require('express-session')
 const flash = require('connect-flash')
-const dotenv = require('dotenv')
+const dotenv = require('dotenv').config()
 const passport = require('./config/passport')
 
 
 
-dotenv.config({path: './config.env'});
+// dotenv.config({path: './config.env'});
 
 const app=express()
 
