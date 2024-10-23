@@ -5,6 +5,10 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const dotenv = require('dotenv').config()
 const passport = require('./config/passport')
+// const userRoute = require('./controllers/userController')
+// const adminRoute = require('./controllers/admin/adminController')
+const userRoute = require('./routes/userRoute')
+const adminRoute = require('./routes/adminRoute')
 
 
 
@@ -60,12 +64,12 @@ mongoose.connect(process.env.MONGODB_URI,
     });
 
 
-// importing user routes
-const userRoute = require('./routes/userRoute')
+// User routes
+
 app.use('/',userRoute)
 
-//importing admin routes
-const adminRoute = require('./routes/adminRoute')
+//Admin routes
+
 app.use('/admin',adminRoute)
 
 

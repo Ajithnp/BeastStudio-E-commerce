@@ -1,66 +1,269 @@
-<%- include('../partials/admin/header', { title: 'Admin Sign In' }) %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admi Login</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
 
-<div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
-    <div class="login-container row shadow-lg">
-      <!-- Left Section -->
-      <div class="left-section col-md-6 d-flex flex-column justify-content-center align-items-center text-center">
-        <img
-          src="./public/images/admin_login.png"
-          alt="Beats Logo" class="mb-3"
-        />
-        <h1>BEATS AUDIO</h1>
-        <p>Feel the sound. Live the experience.</p>
-      </div>
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Oswald", sans-serif;
+    color: #E3E3E3;
+}
 
-      <!-- Right Section -->
-      <div class="right-section col-md-6 p-5">
-        <h2 class="text-warning mb-3">Admin Login</h2>
-        <p class="mb-4">Only admins are allowed to log in through this interface</p>
-        <%
-        if(typeof message !== 'undefined'){
-            %>
-            <h5 class = "text-center text-danger" ><%= message %></h5>
-            <%
-        }
-        %>
+/* Body Styles */
+body {
+    background-image: url('https://images.unsplash.com/photo-1533134486753-c833f0ed4866');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
 
-        <form action="#" method="POST">
-          <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input
-              type="email"
-              class="form-control"
-              id="email"
-              name="email"
-              placeholder="admin@email.com"
-              required
-            />
+/* Container Layout */
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Hero Section */
+.hero-card {
+    flex: 1;
+    min-width: 300px;
+}
+
+.hero-card h1,
+.hero-card p {
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+    padding: 2rem;
+}
+
+/* Login Box */
+.login-box {
+    background-color: #212124;
+    flex: 1;
+    max-width: 400px;
+    min-width: 300px;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 5px 8px 0 0 black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+/* Header Styles */
+.login-header h1 {
+    text-align: center;
+    color: white;
+}
+
+.login-header p {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+/* Input Styles */
+.login input {
+    background-color: #3C4043;
+    width: 100%;
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    border-radius: 0.5rem;
+    border: 1px solid black;
+    font-size: 1rem;
+}
+
+.login input:focus {
+    outline: none;
+    border-color: #e3e3e3;
+}
+
+/* Button Styles */
+.form-button {
+    background: linear-gradient(to right, white 50%, black 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    width: 100%;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.form-button:hover {
+    background-position: left bottom;
+    color: black;
+}
+
+/* Footer Styles */
+.signup-footer {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.signup-footer a {
+    text-decoration: none;
+    color: #e3e3e3;
+    transition: color 0.3s ease-in-out;
+}
+
+.signup-footer a:hover {
+    color: white;
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-card {
+        text-align: center;
+    }
+
+    .login-box {
+        width: 90%;
+        height: auto;
+    }
+
+    .hero-card h1 {
+        font-size: 2rem;
+    }
+
+    .hero-card p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-button {
+        padding: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .login input {
+        padding: 0.5rem;
+    }
+
+    .hero-card h1 {
+        font-size: 1.5rem;
+    }
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero-card">
+      <h1>PLANKTONS</h1>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Provident
+        saepe molestias recusandae possimus sed iure, delectus facere libero
+        rerum! Sed ex nesciunt alias quae eos obcaecati voluptatibus facilis
+        maiores fugiat.
+      </p>
+    </div>
+
+    <div class="login-box">
+      <header class="login-header">
+        <h1>Member Login</h1>
+        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit.</p>
+      </header>
+      <main class=" Admin login">
+        <form  id="adminLoginForm" action="#">
+          <div>
+            <input type="email" id="email" name="email" placeholder="Email" required />
+            <span id="emailError" class="error-message"></span>
+          </div>
+          <div>
+            <input type="password" id="password" name="password" placeholder="Password" required />
+            <span id="passwordError" class="error-message"></span>
           </div>
 
-          <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-            />
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="remember" />
-              <label class="form-check-label" for="remember">Remember me</label>
-            </div>
-            <a href="#" class="text-warning text-decoration-none">Forgot Password?</a>
-          </div>
-
-          <button type="submit" class="btn btn-warning w-100 fw-bold">Login Account</button>
+          <button type="submit" class="form-button">Login</button>
         </form>
-      </div>
+      </main>
+      <footer class="signup-footer">
+        <p><a href="#">Don't have an account?</a></p>
+      </footer>
     </div>
   </div>
+  <script>
 
-<%- include('../partials/admin/footer') %>
+    document.getElementById('adminLoginForm').addEventListener('submit', function (event){
+      event.preventDefault() // Preven default for submission
+
+      // Clear previous error messages
+      document.getElementById('emailError').textContent = ""
+      document.getElementById('passwordError').textContent = ""
+
+      // fetch values
+      const email = document.getElementById('email').value
+      const password = document.getElementById('password').value
+      
+      let isvalid = true;
+
+      // Validate email format
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(email)) {
+        document.getElementById('emailError').textContent = 'Please enter a valid email address..!';
+        isValid = false;
+    } 
+    // Validate password length
+
+    if(password.length < 6) {
+      document.getElementById('passwordError').textContent = 'password must contain at least 6 characters..!'
+      isvalid = false;
+    }
+
+    // If validation success , send data to back-end.
+    if (isvalid) {
+      fetch('/admin/login' ,{
+        method : 'POST',
+        headers :{
+          'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      })
+      .then(response => response.json())
+
+      .then(data =>{
+        if (data.success) {
+          window.location.href = '/admin'; // redirect to dashboard
+        } else {
+          alert(data.message) // show error message from server
+        }
+      })
+      .catch(error =>{
+        console.error('Error', error);
+        alert('An error occured while loggin in..!');
+        
+      })
+    }
+
+
+
+    })
+  </script>
+</body>
+</html>

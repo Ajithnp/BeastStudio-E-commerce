@@ -1,4 +1,4 @@
-const User = require('../models/userModel')
+const User = require('../../models/userModel')
 const dotenv = require("dotenv").config()
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
@@ -29,17 +29,28 @@ exports.loadPageNotFound= async(req,res)=>{
 //for loading home page
 exports.loadHomePage = async(req,res)=>{
     try {
-        return res.status(200).render('user/home')
-        
+       
+        // Assign user data from session..!
+        const user = req.session.user
+      
+        if (user){
+            const userData = await User.findOne({_id: user.id})
+           return  res.status(200).render('user/home',{user: userData})
+        }
+
+        else{
+           return res.status(200).render('user/home')
+        } 
     } catch (error) {
         console.error('Error loading home page: ',error.message)
 
         res.status(500).json({
             status:"fail",
-            message:"An error occurred while loading the home page."
+            message:"Internal Server Error..!"
         })
     }
 }
+
 //user login page handler
 exports.loadLogin = async(req,res)=>{
     try {
@@ -83,11 +94,9 @@ exports.verifyLogin = async (req , res)=>{
         }
 
         // Store user details in session..!
-        req.session.user = {id: user._id, name: user.name }
+        req.session.user = {id: user._id }
         res.status(200).json({message: "Login successful..!",user: req.session.user});
-
-    
-        
+  
     } catch (error) {
         console.error("Login error: ",error);
         
@@ -266,5 +275,26 @@ exports.verifyOtp = async (req, res)=>{
         console.error('OTP verification failed',error)
 
         res.status(500).json({success: false, message:"An error occured while verifying the otp" });
+    }
+};
+
+// Logout handler
+exports.logout = async (req, res )=>{
+     try{
+          // session destroy
+          
+    req.session.destroy((err)=>{
+      
+        if (err){
+            console.log('session destruction eroor..!',err.message);
+            return res.status(500).json({message: "Could not logout...!"})
+        }
+        res.status(200).json({message: "Logout successfully..!"})
+       
+    })
+   
+    }catch(error){
+        console.log("Logout error",error);
+        res.status(500).json({message: "Internal server error..!"})
     }
 };

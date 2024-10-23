@@ -1,6 +1,6 @@
 <%- include('../partials/user/header') %>
 <!-- Header -->
-<header>
+<header style="position: relative; z-index: 500;">
     <!-- Header desktop -->
     <div class="container-menu-desktop">
         <!-- Topbar -->
@@ -14,21 +14,30 @@
                     <a href="#" class="flex-c-m trans-04 p-lr-25">
                         Help & FAQs
                     </a>
+                     <% if (locals.user) {%>
+                        <div class="dropdown">
+                            <a href="#" class="sign-in-link flex-c-m trans-04 p-lr-25 "><%=locals.user.name%></a>
+                            <div class="dropdown-content">
+                                <a href="/userProfile">Profile</a>
+                                <a href="/logout" id="logoutButton">Logout</a>
 
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        My Account
-                    </a>
+                            </div>
+                        </div>
 
-                    <a href="#" class="flex-c-m trans-04 p-lr-25">
-                        EN
-                    </a>
-
+                   <%}else {%>
+                         
                     <a href="/login" class="flex-c-m trans-04 p-lr-25">   
                         LOGIN  
                     </a>
+
                     <a href="/signup" class="flex-c-m trans-04 p-lr-25">
                         CREATE ACCOUNT
                     </a>
+                  <%}%>
+                    <!-- <a href="#" class="flex-c-m trans-04 p-lr-25">
+                        My Account
+                    </a> -->
+
                 </div>
             </div>
         </div>
@@ -139,17 +148,29 @@
                         Help & FAQs
                     </a>
 
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
-                        My Account
+                       <% if (locals.user) {%>
+                        <!-- <div class="dropdown"> -->
+                            <a href="#" class="flex-c-m p-lr-10 trans-04"><%=locals.user.name%></a>
+                            <div class="dropdown-content">
+                                <a href="/userProfile">Profile</a>
+                                <a href="/logout">Logout</a>
+
+                            </div>
+                        <!-- </div> -->
+
+                   <%}else {%>
+                         
+                    <a href="/login" class="flex-c-m trans-04 p-lr-25">   
+                        LOGIN  
                     </a>
 
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
-                        EN
+                    <a href="/signup" class="flex-c-m trans-04 p-lr-25">
+                        CREATE ACCOUNT
                     </a>
-
-                    <a href="#" class="flex-c-m p-lr-10 trans-04">
+                  <%}%>
+                    <!-- <a href="#" class="flex-c-m p-lr-10 trans-04">
                         USD
-                    </a>
+                    </a> -->
                 </div>
             </li>
         </ul>
@@ -1537,4 +1558,60 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
         </div>
     </div>
 </div>
+<script>
+    // Logout button event
+    document.getElementById('logoutButton').addEventListener('click', async (event)=>{
+        event.preventDefault()  // prevent defualt link behaviour
+
+        //Show sweet alert confirmation dialog
+        const result = await Swal.fire({
+            title: ' Do you want to logout..?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!',
+             cancelButtonText: 'No!'
+
+        });
+        // If the user confirms, proceed with logout
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type' : 'application/json'
+                    }
+                });
+
+                if (! response.ok){
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Logout failed');
+                }
+
+                const data = await response.json();
+                Swal.fire({
+                    title: 'Logged Out!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonText: 'OK'
+
+                }).then(()=>{
+                    window.location.href = '/login'  // after success redirect
+                })
+                
+            } catch (error) {
+                console.error('An error occurred during logout:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+                
+            }
+        }
+    });
+</script>
 <%- include('../partials/user/footer') %>
